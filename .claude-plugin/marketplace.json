@@ -1,0 +1,7 @@
+{
+  "name": "uw-local",
+  "owner": { "name": "fangjun" },
+  "plugins": [
+    { "name": "uw", "source": "./" }
+  ]
+}
