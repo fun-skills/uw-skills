@@ -1,5 +1,5 @@
 {
-  "name": "uw-local",
+  "name": "uwlab",
   "owner": { "name": "fangjun" },
   "plugins": [
     { "name": "uw", "source": "./" }

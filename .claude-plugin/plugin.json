@@ -1,6 +1,8 @@
 {
   "name": "uw",
   "skills": [
-    "./skills/info/outline"
+    "./skills/info/outline",
+    "./skills/info/teachme",
+    "./skills/info/lesson-generator"
   ]
 }
