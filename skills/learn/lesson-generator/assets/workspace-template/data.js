@@ -7,7 +7,7 @@
 
 var COURSE = {
   schemaVersion: "1.0.0",
-  style: "claude-style",        // "claude-style" | "apple-style" | "bluetech-style"
+  style: "default-style",        // "default-style" | "apple-style" | "bluetech-style"
   title: "COURSE_TITLE",
   badge: "BADGE_TEXT",
   description: "COURSE_DESCRIPTION",

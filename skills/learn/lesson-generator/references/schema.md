@@ -7,7 +7,7 @@
 ```ts
 {
   schemaVersion: string,   // "1.0.0"，用于模板兼容性检查
-  style: string,           // "claude-style"（默认）| "apple-style" | "bluetech-style"
+  style: string,           // "default-style"（默认）| "apple-style" | "bluetech-style"
   title: string,
   badge: string,           // 侧栏上下文标签
   description: string,     // 2-3 句课程描述

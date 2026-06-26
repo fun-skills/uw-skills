@@ -13,11 +13,11 @@ description: 通过复用 HTML/CSS/JS 模板，生成高度一致的多课时课
 
 `spaceclone` 负责把 `assets/workspace-template/` 下的四个文件复制到工作目录。其中 `index.html`（框架）、`styles.css`（样式）、`script.js`（运行时逻辑）是冻结的——一旦写入就不再修改。`data.js` 只包含一个占位 COURSE 对象，每次生成课程时由你全新编写覆盖它。
 
-COURSE 对象通过 `style` 字段切换整体配色。缺省为 `"claude-style"`。
+COURSE 对象通过 `style` 字段切换整体配色。缺省为 `"default-style"`。
 
 | 风格 | 主色 | 适用场景 |
 |------|------|---------|
-| `claude-style` | 暖橙 `#c2410c` | 默认，温暖学术感 |
+| `default-style` | 暖橙 `#c2410c` | 默认，温暖学术感 |
 | `apple-style` | 苹果蓝 `#0071e3` | 简洁现代 |
 | `bluetech-style` | 亮蓝 `#3b82f6` | 科技感 |
 
