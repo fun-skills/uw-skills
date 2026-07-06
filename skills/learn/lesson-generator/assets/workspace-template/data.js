@@ -6,8 +6,11 @@
    ═══════════════════════════════════════════════════════════════ */
 
 var COURSE = {
-  schemaVersion: "1.0.0",
+  schemaVersion: "1.1.0",
   style: "default-style",        // "default-style" | "apple-style" | "bluetech-style"
+  showIcons: true,               // false 则全局关闭 emoji 图标
+  showQuiz: true,                // false 则关闭普通节测验
+  showFinalQuiz: true,            // false 则关闭总复习测验
   title: "COURSE_TITLE",
   badge: "BADGE_TEXT",
   description: "COURSE_DESCRIPTION",
@@ -28,10 +31,13 @@ var COURSE = {
            ]},
            { type: "code-example", label: "示例代码", lang: "javascript", code: "..." },
            { type: "case-example", label: "案例分析", scenario: "...", analysis: "..." },
-           { type: "insight", text: "..." }
+           { type: "insight", icon: "💡", title: "标题", text: "..." },
+           { type: "list-block", items: [
+             { icon: "🎯", title: "标题", desc: "描述" }
+           ]}
          ],
          flashcards: [         // 2-3 per lesson, [] for final review
-           { front: "...", back: "..." }
+           { icon: "🎯", front: "...", back: "..." }       // icon 可选
          ],
          quiz: [               // 1-2 per lesson, 4+ for final review
            {

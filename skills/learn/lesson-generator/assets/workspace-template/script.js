@@ -28,7 +28,7 @@
   const progressCount = $("#progress-count");
 
   /* ── Schema version check ───────────────────────────────────── */
-  var SCHEMA_VERSION = "1.0.0";
+  var SCHEMA_VERSION = "1.1.0";
   if (!COURSE.schemaVersion) {
     console.warn("[lesson-generator] data.js 缺少 schemaVersion，可能与当前模板版本 (" + SCHEMA_VERSION + ") 不兼容");
   } else if (COURSE.schemaVersion !== SCHEMA_VERSION) {
@@ -53,7 +53,8 @@
       var li = document.createElement("li");
       li.className = "nav-item";
       li.dataset.lesson = l.id;
-      li.innerHTML = '<span class="nav-number">' + l.id + '</span><span class="nav-label">' + l.title + '</span>';
+      var numStr = l.id < 10 ? "0" + l.id : String(l.id);
+      li.innerHTML = '<span class="nav-number">' + numStr + '</span><span class="nav-label">' + l.title + '</span>';
       li.addEventListener("click", function() { showLesson(l.id); });
       lessonNav.appendChild(li);
     });
@@ -64,8 +65,9 @@
     COURSE.lessons.forEach(function(l) {
       var card = document.createElement("div");
       card.className = "lesson-card";
+      var cardNumStr = l.id < 10 ? "0" + l.id : String(l.id);
       card.innerHTML =
-        '<div class="lesson-card-number">第 ' + l.id + ' 节</div>' +
+        '<div class="lesson-card-number">' + cardNumStr + '</div>' +
         '<div class="lesson-card-title">' + l.title + '</div>' +
         '<div class="lesson-card-concepts">' + l.concepts.join(" · ") + '</div>';
       card.addEventListener("click", function() { showLesson(l.id); });
@@ -89,7 +91,7 @@
     renderLesson(id);
     updateSidebarActive();
     updateNavButtons();
-    $("#lesson-view").scrollTop = 0;
+    window.scrollTo(0, 0);
   }
 
   /* ── Render lesson ───────────────────────────────────────── */
@@ -97,9 +99,11 @@
     var l = COURSE.lessons[id - 1];
     if (!l) return;
 
-    $("#lesson-number").textContent = "第 " + id + " 节";
+    var showIcons = COURSE.showIcons !== false;
+    var lessonNumStr = id < 10 ? "0" + id : String(id);
+    $("#lesson-number").textContent = lessonNumStr;
     $("#lesson-title").textContent = l.title;
-    $("#lesson-goal").innerHTML = "<strong>本节目标：</strong>" + l.goal;
+    $("#lesson-goal").textContent = l.goal;
 
     var objList = $("#objectives-list");
     objList.innerHTML = "";
@@ -170,8 +174,47 @@
       } else if (block.type === "insight") {
         var insight = document.createElement("div");
         insight.className = "insight";
-        insight.innerHTML = "<strong>关键洞察：</strong>" + block.text;
+        if (showIcons && block.icon) {
+          var iconEl = document.createElement("span");
+          iconEl.className = "insight-icon";
+          iconEl.textContent = block.icon;
+          insight.appendChild(iconEl);
+        }
+        var bodyDiv = document.createElement("div");
+        bodyDiv.className = "insight-body";
+        if (block.title) {
+          var titleEl = document.createElement("strong");
+          titleEl.className = "insight-title";
+          titleEl.textContent = block.title;
+          bodyDiv.appendChild(titleEl);
+        }
+        var textEl = document.createElement("span");
+        textEl.className = "insight-text";
+        textEl.textContent = block.text;
+        bodyDiv.appendChild(textEl);
+        insight.appendChild(bodyDiv);
         body.appendChild(insight);
+      } else if (block.type === "list-block") {
+        var grid = document.createElement("div");
+        grid.className = "pattern-cards";
+        block.items.forEach(function(item) {
+          var card = document.createElement("div");
+          card.className = "pattern-card";
+          var iconDiv = document.createElement("div");
+          iconDiv.className = "pattern-icon";
+          iconDiv.textContent = showIcons && item.icon ? item.icon : "";
+          card.appendChild(iconDiv);
+          var titleDiv = document.createElement("div");
+          titleDiv.className = "pattern-title";
+          titleDiv.textContent = item.title;
+          card.appendChild(titleDiv);
+          var descP = document.createElement("p");
+          descP.className = "pattern-desc";
+          descP.textContent = item.desc;
+          card.appendChild(descP);
+          grid.appendChild(card);
+        });
+        body.appendChild(grid);
       }
     });
 
@@ -182,10 +225,11 @@
       l.flashcards.forEach(function(card) {
         var fc = document.createElement("div");
         fc.className = "flashcard";
+        var iconHTML = (showIcons && card.icon) ? '<span class="flashcard-icon">' + card.icon + '</span>' : '';
         fc.innerHTML =
           '<div class="flashcard-inner">' +
-            '<div class="flashcard-front">' + card.front + '</div>' +
-            '<div class="flashcard-back">' + card.back + '</div>' +
+            '<div class="flashcard-front">' + iconHTML + card.front + '</div>' +
+            '<div class="flashcard-back">' + iconHTML + card.back + '</div>' +
           '</div>';
         fc.addEventListener("click", function() { fc.classList.toggle("flipped"); });
         fcContainer.appendChild(fc);
@@ -196,9 +240,13 @@
 
     var quizContainer = $("#quiz-container");
     quizContainer.innerHTML = "";
-    if (l.quiz.length > 0) {
+    var isFinal = id === COURSE.lessons.length;
+    var quizEnabled = isFinal
+      ? (COURSE.showFinalQuiz !== false)
+      : (COURSE.showQuiz !== false);
+    if (l.quiz.length > 0 && quizEnabled) {
       $("#quiz-block").style.display = "block";
-      if (id === COURSE.lessons.length) {
+      if (isFinal) {
         buildFinalQuiz(quizContainer, l.quiz);
       } else {
         buildLessonQuiz(quizContainer, l.quiz);
@@ -402,6 +450,30 @@
   var overviewNavItem = $("#lesson-nav .nav-item[data-lesson='0']");
   if (overviewNavItem) {
     overviewNavItem.addEventListener("click", function() { showOverview(); });
+  }
+
+  /* ── Keyboard navigation ─────────────────────────────────── */
+  document.addEventListener("keydown", function(e) {
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (currentLesson === 0) showLesson(1);
+      else if (currentLesson < COURSE.lessons.length) showLesson(currentLesson + 1);
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      if (currentLesson > 1) showLesson(currentLesson - 1);
+      else if (currentLesson === 1) showOverview();
+    }
+  });
+
+  /* ── Sidebar toggle ──────────────────────────────────────── */
+  var sidebarToggleBtn = $("#sidebar-toggle-btn");
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener("click", function() {
+      var app = $("#app");
+      app.classList.toggle("sidebar-hidden");
+    });
   }
 
   /* ── Init ────────────────────────────────────────────────── */

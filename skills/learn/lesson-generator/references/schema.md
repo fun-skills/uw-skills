@@ -1,13 +1,16 @@
 # COURSE 数据 Schema
 
-当前 schema 版本：`1.0.0`
+当前 schema 版本：`1.1.0`
 
-每个字段均为必填。
+`showIcons` 可选（默认 `true`），其余字段必填。
 
 ```ts
 {
-  schemaVersion: string,   // "1.0.0"，用于模板兼容性检查
+  schemaVersion: string,   // "1.1.0"
   style: string,           // "default-style"（默认）| "apple-style" | "bluetech-style"
+  showIcons?: boolean,      // false 则全局隐藏 emoji 图标
+  showQuiz?: boolean,       // false 则关闭普通节测验
+  showFinalQuiz?: boolean,  // false 则关闭总复习测验
   title: string,
   badge: string,           // 侧栏上下文标签
   description: string,     // 2-3 句课程描述
@@ -54,7 +57,8 @@ interface Lesson {
 | AI 对话 | `{ type: "ai-dialog", label: "演示", messages: [{role: "user"\|"ai", text: "..."}] }` | AI 对话示例框 |
 | 代码示例 | `{ type: "code-example", label: "示例代码", lang: "javascript", code: "..." }` | 带语言标签的代码块 |
 | 案例分析 | `{ type: "case-example", label: "案例分析", scenario: "...", analysis: "..." }` | 场景+分析的结构化案例 |
-| 洞察 | `{ type: "insight", text: "..." }` | 高亮关键洞察 |
+| 洞察 | `{ type: "insight", icon: "💡", title: "标题", text: "..." }` | 带 emoji 与标题的关键洞察 |
+| 列表卡片 | `{ type: "list-block", items: [{ icon: "🎯", title: "...", desc: "..." }] }` | 网格卡片展示要点列表 |
 
 ## 测验规则
 
