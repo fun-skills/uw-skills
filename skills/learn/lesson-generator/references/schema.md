@@ -1,4 +1,4 @@
-# COURSE 数据 Schema
+# COURSE Schema
 
 当前 schema 版本：`1.1.0`
 
