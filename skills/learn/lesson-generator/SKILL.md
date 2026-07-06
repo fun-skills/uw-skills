@@ -1,6 +1,6 @@
 ---
 name: lesson-generator
-version: "1.1.0"
+version: "1.1.1"
 description: 通过复用 HTML/CSS/JS 模板，生成高度一致的多课时课程制品——每次生成仅 COURSE 数据对象发生变化。
 ---
 
